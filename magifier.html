@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .magnifier {
+            box-sizing: border-box;
+            margin: 20px auto;
+            width: 800px;
+        }
+
+        .magnifier .abbre,
+        .magnifier .origin {
+            float: left;
+        }
+
+        .magnifier .abbre,
+        .magnifier .origin {
+            float: left;
+        }
+
+        .magnifier .abbre {
+            position: relative;
+            box-sizing: border-box;
+            width: 200px;
+            height: 250px;
+        }
+
+        .magnifier .abbre img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .magnifier .abbre .mark {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 60px;
+            background: rgba(255, 0, 0, .3);
+            cursor: move;
+        }
+
+        .magnifier .origin {
+            display: none;
+            position: relative;
+            box-sizing: border-box;
+            width: 350px;
+            height: 350px;
+            border: 1px black solid;
+            overflow: hidden;
+        }
+
+        .magnifier .origin img {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .clearfix::after {
+            content: ‘’;
+            display: block;
+            clear: both
+        }
+    </style>
+</head>
+
+<body>
+    <section class="magnifier clearfix">
+        <div class="abbre">
+            <img src="images/2.jpg">
+            <div class="mark"></div>
+        </div>
+
+        <div class="origin">
+            <img src="images/1.jpg" class="omg" alt="">
+        </div>
+
+    </section>
+    <script>
+        let abbre = document.querySelector('div.abbre'),
+            mark = document.querySelector('.mark'),
+            origin = document.querySelector('.origin')
+        originImg = document.querySelector('.omg');
+
+
+        //计算mark位置
+        function computedMark(ev) {
+            let abbreW = abbre.clientWidth,
+                abbreH = abbre.clientHeight,
+                markW = mark.clientWidth,
+                markH = mark.clientHeight,
+                originW = origin.clientWidth,
+                originH = origin.clientHeight,
+                abbreOffsetW = abbre.offsetLeft,
+                abbreOffsetH = abbre.offsetTop,
+                originImgW = abbreW / markW * originW,
+                originImgH = abbreH / markH * originH;
+                console.log('abbreH',abbreH)
+                console.log('markH',markH)
+                console.log('originH',originH)
+            
+            originImg.style.width = originImgW + 'px';
+            originImg.style.height = originH + 'px';
+            // console.log(ev)
+            let markL = ev.clientX - markW / 2 - abbreOffsetW,
+                markT = ev.clientY - markH / 2 - abbreOffsetH;
+            let minL = 0,
+                minT = 0,
+                maxL = abbreW - markW,
+                maxT = abbreH - markH;
+            markL = markL < minL ? minL : (markL > maxL ? maxL : markL);
+            markT = markT < minT ? minT : (markT > maxT ? maxT : markT);
+            mark.style.left = markL + 'px';
+            mark.style.top = markT + 'px';
+
+            originImg.style.top = -markT / abbreH * originImgH + 'px';
+            originImg.style.left = -markL / abbreW * originImgW + 'px';
+            console.log('markT',markT)
+            console.log('markL',markL)
+            console.log('abbreH',abbreH)
+            console.log('originImgH',originImgH)
+            console.log('originImg.style.top', originImg.style.top)
+            console.log('originImg.style.left', originImg.style.left)
+
+        }
+        abbre.addEventListener('mouseenter', function (e) {
+            mark.style.display = 'block';
+            origin.style.display = 'block';
+        }, false)
+        abbre.addEventListener('mouseleave', function (e) {
+            mark.style.display = 'none';
+            origin.style.display = 'none';
+        }, false)
+
+        abbre.addEventListener('mousemove', computedMark);
+    </script>
+</body>
+
+</html>
